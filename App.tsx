@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import CalculatorControls from './container/CalculatorControls/CalculatorControls';
+import CalculatorControls from './src/container/CalculatorControls/CalculatorControls';
 
 export default function App() {
   return (

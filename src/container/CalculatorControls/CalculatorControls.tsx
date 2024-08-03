@@ -1,133 +1,105 @@
 import React, { useState } from 'react';
-import { Button } from '../../components/Button';
 import { View, StyleSheet, Text } from 'react-native';
+import { Button } from '../../components/Button';
 
 const CalculatorControls = () => {
   const [firstNumber, setFirstNumber] = useState('');
   const [secondNumber, setSecondNumber] = useState('');
   const [operation, setOperation] = useState('');
-  const [result, setResult] = useState<number | null>(null);
 
   const handleOperationPress = (value: string) => {
-    setOperation(value);
+    if (firstNumber) {
+      setOperation(value);
+    }
   };
 
   const handleClearNumbers = () => {
     setFirstNumber('');
     setSecondNumber('');
     setOperation('');
-    setResult(null);
   };
 
   const handleNumberPress = (value: string) => {
     if (operation === '') {
-      setFirstNumber(firstNumber + value);
+      setFirstNumber((prev) => prev + value);
     } else {
-      setSecondNumber(secondNumber + value);
-    }
-    if (result) {
-      setResult(null);
+      setSecondNumber((prev) => prev + value);
     }
   };
 
   const handleDeleteLastDigit = () => {
     if (operation === '') {
-      setFirstNumber(firstNumber.slice(0, -1));
+      setFirstNumber((prev) => prev.slice(0, -1));
     } else {
-      setSecondNumber(secondNumber.slice(0, -1));
+      setSecondNumber((prev) => prev.slice(0, -1));
     }
   };
 
   const handleChangeSign = () => {
     if (operation === '') {
-      setFirstNumber('-' + firstNumber);
+      setFirstNumber((prev) => (prev.startsWith('-') ? prev.slice(1) : '-' + prev));
     } else {
-      setSecondNumber('-' + secondNumber);
+      setSecondNumber((prev) => (prev.startsWith('-') ? prev.slice(1) : '-' + prev));
     }
   };
 
   const handleCalculatePercentageNumber = () => {
     if (operation === '') {
-      setFirstNumber((parseInt(firstNumber, 10) / 100).toString());
+      setFirstNumber((prev) => (prev ? (parseFloat(prev) / 100).toString() : ''));
     } else {
-      setSecondNumber((parseInt(secondNumber, 10) / 100).toString());
+      setSecondNumber((prev) => (prev ? (parseFloat(prev) / 100).toString() : ''));
     }
   };
 
   const handleAddDecimalPoint = () => {
     if (operation === '') {
-      setFirstNumber(firstNumber + '.');
+      setFirstNumber((prev) => (prev.includes('.') ? prev : prev + '.'));
     } else {
-      setSecondNumber(secondNumber + '.');
+      setSecondNumber((prev) => (prev.includes('.') ? prev : prev + '.'));
+    }
+  };
+
+  const calculateResult = (num1: number, num2: number, operation: string): number | null => {
+    switch (operation) {
+      case '+':
+        return num1 + num2;
+      case '-':
+        return num1 - num2;
+      case 'x':
+        return num1 * num2;
+      case '÷':
+        return num2 === 0 ? null : num1 / num2;
+      default:
+        return null;
     }
   };
 
   const handleGetResult = () => {
     const num1 = parseFloat(firstNumber);
     const num2 = parseFloat(secondNumber);
-
-    switch (operation) {
-      case '+':
-        setResult(num1 + num2);
-        break;
-      case '-':
-        setResult(num1 - num2);
-        break;
-      case 'x':
-        setResult(num1 * num2);
-        break;
-      case '÷':
-        if (num2 === 0) {
-          setResult(null);
-        } else {
-          setResult(num1 / num2);
-        }
-        break;
-      default:
-        setResult(null);
-    }
+    const result = calculateResult(num1, num2, operation);
 
     setOperation('');
-    setFirstNumber('');
+    setFirstNumber(`${result?.toString()}`);
     setSecondNumber('');
   };
 
-  const numbers = () => {
-    const fullNumber = firstNumber + ' ' + operation + ' ' + secondNumber;
+  const renderNumbers = () => {
+    const fullNumber = `${firstNumber} ${operation} ${secondNumber}`;
+    const fontSize = fullNumber.length > 9 ? 36 : 72;
 
-    if (fullNumber.length > 9) {
-      return (
-        <>
-          <Text style={{ color: '#fff', fontSize: 36, textAlign: 'right' }}>{firstNumber}</Text>
-          <Text style={{ color: '#fff', fontSize: 36, textAlign: 'right' }}>{operation}</Text>
-          <Text style={{ color: '#fff', fontSize: 36, textAlign: 'right' }}>{secondNumber}</Text>
-          <Text style={{ color: '#fff', fontSize: 36, textAlign: 'right' }}>{result}</Text>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Text style={{ color: '#fff', fontSize: 72, textAlign: 'right' }}>{firstNumber}</Text>
-          <Text style={{ color: '#fff', fontSize: 72, textAlign: 'right' }}>{operation}</Text>
-          <Text style={{ color: '#fff', fontSize: 72, textAlign: 'right' }}>{secondNumber}</Text>
-          <Text style={{ color: '#fff', fontSize: 72, textAlign: 'right' }}>{result}</Text>
-        </>
-      );
-    }
+    return (
+      <View style={styles.contentText}>
+        {firstNumber && <Text style={[styles.text, { fontSize: fontSize }]}>{firstNumber}</Text>}
+        {operation && <Text style={[styles.text, { fontSize: fontSize }]}>{operation}</Text>}
+        {secondNumber && <Text style={[styles.text, { fontSize: fontSize }]}>{secondNumber}</Text>}
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          height: 300,
-          width: '90%',
-          alignSelf: 'center',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-end',
-        }}>
-        {numbers()}
-      </View>
+      {renderNumbers()}
       <View style={styles.row}>
         <Button title="c" onPress={handleClearNumbers} isGray />
         <Button title="+/-" onPress={handleChangeSign} isGray />
@@ -172,5 +144,15 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 50,
+  },
+  text: {
+    color: '#fff',
+    textAlign: 'right',
+    flex: 1,
+  },
+  contentText: {
+    width: '90%',
+    display: 'flex',
+    alignSelf: 'center',
   },
 });
