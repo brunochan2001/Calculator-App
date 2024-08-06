@@ -25,8 +25,13 @@ export const Button: React.FC<IButtonCustom> = ({ onPress, title, isGray, isDark
   }
 
   return (
-    <TouchableOpacity style={[styles.button, { backgroundColor: buttonColor }]} onPress={onPress}>
-      <Text style={[styles.text, { color: textColor }]}>{title}</Text>
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: buttonColor }]}
+      onPress={onPress}
+      testID="button">
+      <Text style={[styles.text, { color: textColor }]} testID="button-text">
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -42,6 +47,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 32,
-    color: '#fff',
   },
 });

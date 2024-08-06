@@ -90,9 +90,21 @@ const CalculatorControls = () => {
 
     return (
       <View style={styles.contentText}>
-        {firstNumber && <Text style={[styles.text, { fontSize: fontSize }]}>{firstNumber}</Text>}
-        {operation && <Text style={[styles.text, { fontSize: fontSize }]}>{operation}</Text>}
-        {secondNumber && <Text style={[styles.text, { fontSize: fontSize }]}>{secondNumber}</Text>}
+        {firstNumber && (
+          <Text style={[styles.text, { fontSize: fontSize }]} testID="firstNumber">
+            {firstNumber}
+          </Text>
+        )}
+        {operation && (
+          <Text style={[styles.text, { fontSize: fontSize }]} testID="operation">
+            {operation}
+          </Text>
+        )}
+        {secondNumber && (
+          <Text style={[styles.text, { fontSize: fontSize }]} testID="secondNumber">
+            {secondNumber}
+          </Text>
+        )}
       </View>
     );
   };
